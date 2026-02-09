@@ -1,9 +1,7 @@
 package com.example.onlineshop.controllers;
-
 import com.example.onlineshop.entities.PhoneEntity;
 import com.example.onlineshop.repositories.PhoneRepository;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController

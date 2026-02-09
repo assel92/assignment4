@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>📱 Phones Inventory CRUD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #ffe6f2;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+            color: #cc0066;
+        }
+        input, button {
+            padding: 6px;
+            margin: 4px;
+            border-radius: 5px;
+            border: 1px solid #ff80bf;
+        }
+        button {
+            background: #ff66a3;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #d94d82;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ffb3d9;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background: #ffb3d9;
+            color: #66002c;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📱 Phones Inventory</h1>
+
+<!-- Reload -->
+<button onclick="loadPhones()">🔄 Reload Phones</button>
+
+<hr>
+
+<!-- CREATE -->
+<h2>Add New Phone</h2>
+<input id="newId" placeholder="ID (required)" type="number">
+<input id="newBrand" placeholder="Brand">
+<input id="newNumber" placeholder="Number" type="number">
+<input id="newPrice" placeholder="Price" type="number">
+<input id="newOS" placeholder="OS">
+<input id="newStorage" placeholder="Storage" type="number">
+<input id="newColor" placeholder="Color">
+<button onclick="createPhone()">Add Phone</button>
+
+<hr>
+
+<!-- DELETE -->
+<h2>Delete Phone</h2>
+<input id="deleteId" placeholder="Phone ID" type="number">
+<button onclick="deletePhone()">Delete Phone</button>
+
+<hr>
+
+<!-- UPDATE -->
+<h2>Update Phone</h2>
+<input id="updateId" placeholder="Phone ID (required)" type="number">
+<input id="updateBrand" placeholder="Brand">
+<input id="updateNumber" placeholder="Number" type="number">
+<input id="updatePrice" placeholder="Price" type="number">
+<input id="updateOS" placeholder="OS">
+<input id="updateStorage" placeholder="Storage" type="number">
+<input id="updateColor" placeholder="Color">
+<button onclick="updatePhone()">Update Phone</button>
+
+<hr>
+
+<!-- TABLE -->
+<table>
+    <thead>
+    <tr>
+        <th>ID</th><th>Brand</th><th>Number</th><th>Price</th><th>OS</th><th>Storage</th><th>Color</th>
+    </tr>
+    </thead>
+    <tbody id="phonesTable"></tbody>
+</table>
+
+<script>
+    const API = "/api/phones";
+
+    // LOAD ALL
+    function loadPhones() {
+        fetch(API)
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById("phonesTable");
+                tbody.innerHTML = "";
+                data.forEach(ph => {
+                    tbody.innerHTML += `
+                    <tr>
+                        <td>${ph.id}</td>
+                        <td>${ph.brand}</td>
+                        <td>${ph.number}</td>
+                        <td>${ph.price}</td>
+                        <td>${ph.os}</td>
+                        <td>${ph.storage}</td>
+                        <td>${ph.color}</td>
+                    </tr>
+                `;
+                });
+            })
+            .catch(err => alert("Error: " + err));
+    }
+
+    // CREATE (with manual ID)
+    function createPhone() {
+        const phone = {
+            id: +document.getElementById("newId").value,
+            brand: document.getElementById("newBrand").value,
+            number: +document.getElementById("newNumber").value,
+            price: +document.getElementById("newPrice").value,
+            os: document.getElementById("newOS").value,
+            storage: +document.getElementById("newStorage").value,
+            color: document.getElementById("newColor").value
+        };
+
+        fetch(API, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(phone)
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to create");
+                return res.json();
+            })
+            .then(() => loadPhones())
+            .catch(err => alert(err));
+    }
+
+    // DELETE
+    function deletePhone() {
+        const id = +document.getElementById("deleteId").value;
+        fetch(`${API}/${id}`, { method: "DELETE" })
+            .then(() => loadPhones())
+            .catch(err => alert("Delete error: " + err));
+    }
+
+    // UPDATE
+    function updatePhone() {
+        const id = +document.getElementById("updateId").value;
+        const phone = {
+            id: id,
+            brand: document.getElementById("updateBrand").value,
+            number: +document.getElementById("updateNumber").value,
+            price: +document.getElementById("updatePrice").value,
+            os: document.getElementById("updateOS").value,
+            storage: +document.getElementById("updateStorage").value,
+            color: document.getElementById("updateColor").value
+        };
+
+        fetch(`${API}/${id}`, {
+            method: "PUT",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(phone)
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Failed to update");
+                return res.json();
+            })
+            .then(() => loadPhones())
+            .catch(err => alert(err));
+    }
+
+    // Initial load
+    window.onload = loadPhones;
+</script>
+
+</body>
+</html>
+

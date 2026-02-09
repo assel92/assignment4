@@ -1,5 +1,7 @@
 package com.example.onlineshop.entities;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
@@ -7,7 +9,6 @@ public class PhoneEntity {
 
     @Id
     private Integer id;
-
     private int number;
     private float price;
     private String brand;
